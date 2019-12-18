@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/t1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DPM"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/adamina"
+        android:text="Personal Tracking Device"
+        android:textAlignment="center"/>
+
+    <Button
+        android:id="@+id/startServiceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layoutDirection="ltr"
+        android:text="Start Service"
+        app:layout_constraintEnd_toStartOf="@+id/stopServiceBtn"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <Button
+        android:id="@+id/stopServiceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layoutDirection="rtl"
+        android:text="Stop Service"
+        app:layout_constraintEnd_toEndOf="@id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <TextView
+        android:id="@+id/t2"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <TextView
+        android:id="@+id/latitude_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latitude"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/t"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <TextView
+        android:id="@+id/latitude_txt2"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="Longitude"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/t3"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <TextView
+        android:id="@+id/latitude_txt3"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="Speed"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/t4"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/t1" />
+
+    <TextView
+        android:id="@+id/latitude_txt4"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="Time"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/Imei_txt5"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/fixed_txt_IMEI"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="IMEI Number"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/RequestView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/ResponseView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

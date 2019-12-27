@@ -1,9 +1,12 @@
 package com.example.gps_activity;
 
 import android.annotation.SuppressLint;
+import android.provider.Settings;
+import android.os.Build;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -13,24 +16,28 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationAvailability;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.util.Arrays;
 import java.util.TimeZone;
+import android.text.TextUtils;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
-//import java.util.Date;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 
 public class GPS_Service extends Service {
 
-    //private LocationListener locListner;
-    //private LocationManager locManager;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
-    //private int runOnce=0;
+    LocationManager locationManager;
     private String TAG= "Debug";
-
+    private static final int REQUEST_CODE_LOCATION = 1000;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,22 +57,34 @@ public class GPS_Service extends Service {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+        if(isLocationServiceAvailbale()==false)
+        {
+            Intent i = new Intent("location_update");
+            String locationStopped ="LOCATION_STOPPED";
+            i.putExtra("coordinates",locationStopped);
+            sendBroadcast(i);
+        }
+
         locationCallback = new LocationCallback()
         {
+            Intent i = new Intent("location_update");
+            @Override
+            public void onLocationAvailability(LocationAvailability locationAvailability) {
+                if (locationAvailability.isLocationAvailable() == false) {
+                    String locationStopped ="LOCATION_STOPPED";
+                    i.putExtra("coordinates",locationStopped);
+                    sendBroadcast(i);
+                }
+            }
+
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                //super.onLocationResult(locationResult);
                 for (Location location : locationResult.getLocations())
                 {
+                    Log.d(TAG, "onCreate: location service availalble 2: "+isLocationServiceAvailbale());
                     Log.d(TAG, "onLocationResult: Latitude : "+String.valueOf(location.getLatitude())+
                             " \t Longitude : "+String.valueOf(location.getLongitude()));
-                    Intent i = new Intent("location_update");
 
-                    /*i.putExtra("coordinates",location.getLongitude()+"#"+location.getLatitude()+
-                            "#"+new java.text.SimpleDateFormat("yyyy-MM-dd").format(location.getTime())+
-                            "T"+new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(location.getTime())+
-                            "#"+ String.valueOf(location.getSpeed()));*/
-                    //String time = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(location.getTime());
 
                     i.putExtra("coordinates",location.getLongitude()+"#"+location.getLatitude()+
                             "#"+sdf.format(location.getTime())+
@@ -78,10 +97,11 @@ public class GPS_Service extends Service {
             }
         };
 
-
         try
         {
+            //Log.d(TAG, "onCreate: location service availalble 9: "+isLocationServiceAvailbale());
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            //Log.d(TAG, "onCreate: location service availalble 10: "+isLocationServiceAvailbale());
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
         }
         catch (Exception e)
@@ -91,70 +111,35 @@ public class GPS_Service extends Service {
         }
 
     }
-/*@SuppressLint("MissingPermission")
-    @Override
-    public void onCreate() {
-        Log.d("Debug", "onCreate: Inside oncreate service ");
-        locListner = new LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.d("Debug", "onLocationChanged: calling location Changed ");
-                Intent i = new Intent("location_update");
-                i.putExtra("coordinates",location.getLongitude()+"#"+location.getLatitude()+
-                        "#"+new java.text.SimpleDateFormat("yyyy-MM-dd").format(location.getTime())+
-                        "T"+new java.text.SimpleDateFormat("HH:mm:ss.SSS").format(location.getTime())+
-                        "#"+ String.valueOf(location.getSpeed()));
-                //String time = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(location.getTime());
-                sendBroadcast(i);
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                Log.d("Debug", "onStatusChanged: ");
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.d("Debug", "onProviderEnabled: ");
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.d("Debug", "onProviderDisabled: ");
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-            }
-        };
-
-        Log.d("Debug", "onCreate: here 1 ");
-        locManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-        Log.d("Debug", "onCreate: here 2 ");
-
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,0,locListner);
-
-        //GpsStatus gps_stat;
-        //Log.d("Debug", "onCreate: "+locManager.getGpsStatus(GpsStatus gps_stat));
-        Log.d("Debug", "onCreate: "+locManager.getProviders(true));
-        Log.d("Debug", "onCreate: "+locManager.getProvider("gps"));
-        Log.d("Debug", "onCreate: "+locManager.getLastKnownLocation("network"));
-
-
-    }*/
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        /*if(locManager!=null)
-        {
-            locManager.removeUpdates(locListner);
-        }*/
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
+
+    public boolean isLocationServiceAvailbale()
+    {
+        String locationProviders;
+        boolean isAvailable = false;
+        int locationMode = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(getApplicationContext().getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            isAvailable = (locationMode != Settings.Secure.LOCATION_MODE_OFF);
+        } else {
+            locationProviders = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            isAvailable = !TextUtils.isEmpty(locationProviders);
+        }
+        boolean coarsePermissionCheck = (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+        boolean finePermissionCheck = (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+
+        return isAvailable && (coarsePermissionCheck || finePermissionCheck);
+    }
+
 }
